@@ -9,14 +9,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
@@ -24,12 +27,14 @@ public class SeriesActivity extends Activity {
 	
 	private Item selectedItem;
 	private CoverFlow coverFlow;
+	private String previousOrientation;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        previousOrientation = getOrientationString();
         
         String seriesName = null;
         boolean readRecent = false;
@@ -83,6 +88,33 @@ public class SeriesActivity extends Activity {
 		}
 		return true;
 	}
+	
+	@Override
+	protected void onDestroy() {
+		if(coverFlow != null)
+			saveZoom(coverFlow.getZoom());
+		super.onDestroy();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+        coverFlow.setZoom(loadZoom());
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		String newOrientation = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ?
+				"landscape" : "portrait";
+		if(coverFlow != null){
+			if(!newOrientation.equals(previousOrientation)){
+				saveZoom(coverFlow.getZoom(), previousOrientation);
+		        coverFlow.setZoom(loadZoom(newOrientation));
+			}
+		}
+        previousOrientation = newOrientation;
+	}
     
     private void initialize(final List<Item> items){
         setContentView(R.layout.main);
@@ -90,6 +122,7 @@ public class SeriesActivity extends Activity {
         final ItemAdapter coverImageAdapter =  new ItemAdapter(this, items, true);
         
         coverFlow = (CoverFlow) findViewById(R.id.coverflow);
+        coverFlow.setZoom(loadZoom());
         coverFlow.setAdapter(coverImageAdapter);
         coverFlow.setAnimationDuration(1000);
         
@@ -145,12 +178,14 @@ public class SeriesActivity extends Activity {
     }
     
     private void runThisActivityAgain(Bundle data){
+    	saveZoom(coverFlow.getZoom());
 		Intent intent = new Intent(SeriesActivity.this, SeriesActivity.class);
 		intent.putExtras(data);
 		startActivityForResult(intent, 0);
     }
     
     private void runPerfectViewer(Uri data){
+    	saveZoom(coverFlow.getZoom());
 		try{
 			Intent intent = new Intent();
 			intent.setClassName("com.rookiestudio.perfectviewer", "com.rookiestudio.perfectviewer.TViewerMain");
@@ -172,4 +207,26 @@ public class SeriesActivity extends Activity {
 			alertDialog.show();
 		}
     }
+    
+    private void saveZoom(float zoom, String orientation){
+    	getSharedPreferences("default", MODE_PRIVATE).edit().putFloat(orientation+"_zoom", zoom).commit();
+    }
+    
+    private void saveZoom(float zoom){
+    	saveZoom(zoom, getOrientationString());
+    }
+    
+    private float loadZoom(){
+    	return loadZoom(getOrientationString());
+    }
+    
+    private float loadZoom(String orientation){
+    	return getSharedPreferences("default", MODE_PRIVATE).getFloat(orientation+"_zoom", -200.0f);
+    }
+    
+    private String getOrientationString(){
+    	Display display = getWindowManager().getDefaultDisplay();
+    	return display.getWidth() > display.getHeight() ? "landscape" : "portrait";
+    }
+    
 }
