@@ -44,9 +44,9 @@ public class CoverFlow extends Gallery {
 	/**
 	 * The maximum zoom on the centre Child
 	 */
-	private int mMaxZoom = -90;
+	private int mMaxZoom = -100;
 	
-	private float mZoom = -310.0f;
+	private float mZoom = -350.0f;
 
 	/**
 	 * The Centre of the Coverflow

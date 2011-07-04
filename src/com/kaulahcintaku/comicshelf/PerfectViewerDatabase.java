@@ -32,9 +32,23 @@ public class PerfectViewerDatabase {
 		database = null;
 	}
 	
+	private static final String SERIES_QUERY = 
+	"select book_cate, book_path, book_cover "+
+	"from bookfolder "+
+	"where book_path "+
+	"in ( " +
+	"	select bp "+
+	"	from " +
+	"		( " +
+	"		select book_index, book_cate, min(book_path) as bp " +
+	"		from bookfolder " +
+	"		group by book_cate) " +
+	" 		) " +
+    "group by book_cate";
+	
 	public List<Item> getSeries(){
 		List<Item> results = new ArrayList<Item>();
-		Cursor cursor = database.query(true, TABLE_NAME, TABLE_COLUMNS, null,  null, "book_cate", null, "book_path", null);
+		Cursor cursor = database.rawQuery(SERIES_QUERY, null);
 		while(cursor.moveToNext()){
 			Item series = new Item(cursor.getBlob(2), cursor.getString(0), cursor.getString(1), true);
 			String sql = "SELECT COUNT(*) FROM " + TABLE_NAME+" WHERE book_cate=?";

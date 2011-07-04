@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +17,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -24,7 +26,6 @@ import android.widget.ImageView.ScaleType;
 
 public class ItemAdapter extends BaseAdapter {
 	
-	private int galleryItemBackground;
 	private Context context;
 
 	private ImageView[] imageViews;
@@ -41,6 +42,7 @@ public class ItemAdapter extends BaseAdapter {
 		if(useReflection){
 			bitmaps = createReflectedImages(bitmaps);
 		}
+		
 	}
 
 	private List<Bitmap> createReflectedImages(List<Bitmap> originalImages) {
@@ -116,6 +118,7 @@ public class ItemAdapter extends BaseAdapter {
 		i.setImageBitmap(bitmaps.get(position));
 		i.setLayoutParams(new CoverFlow.LayoutParams(130, 130));
 		i.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		//i.setBackgroundResource(galleryItemBackground);
 
 		// Make sure we set anti-aliasing otherwise we get jaggies
 		BitmapDrawable drawable = (BitmapDrawable) i.getDrawable();
