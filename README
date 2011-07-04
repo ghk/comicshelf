@@ -1,5 +1,7 @@
 Android comic library for perfect viewer https://market.android.com/details?id=com.rookiestudio.perfectviewer&hl=en
 
+It reads perfectviewer bookdata.db
+
 Using coverflow widget: http://www.inter-fuser.com/2010/02/android-coverflow-widget-v2.html
 
 Icons by: http://www.customicondesign.com/

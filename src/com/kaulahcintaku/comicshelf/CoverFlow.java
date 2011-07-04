@@ -40,13 +40,18 @@ public class CoverFlow extends Gallery {
 	 * The maximum angle the Child ImageView will be rotated by
 	 */
 	private int mMaxRotationAngle = 30;
+	
+	/**
+	 * The base z translation
+	 */
+	private float mZoom = -350.0f;
 
 	/**
-	 * The maximum zoom on the centre Child
+	 * The maximum zoom (z translation) on the centre Child
+	 * so the center child translations equals to mZoom + mMaxZoom
 	 */
 	private int mMaxZoom = -100;
 	
-	private float mZoom = -350.0f;
 
 	/**
 	 * The Centre of the Coverflow
@@ -104,6 +109,15 @@ public class CoverFlow extends Gallery {
 	 */
 	public void setMaxZoom(int maxZoom) {
 		mMaxZoom = maxZoom;
+	}
+	
+	
+	public void setZoom(float zoom){
+		mZoom = zoom;
+	}
+	
+	public float getZoom(){
+		return mZoom;
 	}
 
 	/**

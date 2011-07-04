@@ -42,7 +42,8 @@ public class ItemAdapter extends BaseAdapter {
 		if(useReflection){
 			bitmaps = createReflectedImages(bitmaps);
 		}
-		
+        for(Item item: items)
+        	item.clearImage();
 	}
 
 	private List<Bitmap> createReflectedImages(List<Bitmap> originalImages) {

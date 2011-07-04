@@ -13,6 +13,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
@@ -20,7 +22,38 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class SeriesActivity extends Activity {
+	
 	private Item selectedItem;
+	private CoverFlow coverFlow;
+	
+	private ScaleGestureDetector scaleDetector =  new ScaleGestureDetector(this, 
+			
+		new ScaleGestureDetector.OnScaleGestureListener() {
+    	
+			float minZoom = -400;
+			float maxZoom = -200;
+		
+			@Override
+			public void onScaleEnd(ScaleGestureDetector detector) {
+			}
+			
+			@Override
+			public boolean onScaleBegin(ScaleGestureDetector detector) {
+				return true;
+			}
+			
+			@Override
+			public boolean onScale(ScaleGestureDetector detector) {
+				float newZoom = coverFlow.getZoom()*detector.getScaleFactor();
+				if(newZoom > maxZoom)
+					newZoom = maxZoom;
+				if(newZoom < minZoom)
+					newZoom = minZoom;
+				coverFlow.setZoom(newZoom);
+				coverFlow.setSelection(coverFlow.getSelectedItemPosition());
+				return true;
+			}
+	});
 	
     /** Called when the activity is first created. */
     @Override
@@ -44,10 +77,25 @@ public class SeriesActivity extends Activity {
     	initialize(items);
     }
     
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+    	if(scaleDetector == null)
+    		return false;
+    	
+		return scaleDetector.onTouchEvent(event);
+    }
+    
     private void initialize(final List<Item> items){
         setContentView(R.layout.main);
         
-        CoverFlow coverFlow = (CoverFlow) findViewById(R.id.coverflow);
+        ItemAdapter coverImageAdapter =  new ItemAdapter(this, items, true);
+        
+        coverFlow = (CoverFlow) findViewById(R.id.coverflow);
+        coverFlow.setAdapter(coverImageAdapter);
+        coverFlow.setSpacing(0);
+        coverFlow.setAnimationDuration(1000);
+        
         coverFlow.setOnItemSelectedListener(new  AdapterView.OnItemSelectedListener() {
         	@Override
         	public void onItemSelected(AdapterView<?> arg0, View arg1,
@@ -59,15 +107,6 @@ public class SeriesActivity extends Activity {
         		setSelectedItem(null);
         	};
 		});
-        
-        ItemAdapter coverImageAdapter =  new ItemAdapter(this, items, true);
-        coverFlow.setAdapter(coverImageAdapter);
-        for(Item item: items)
-        	item.clearImage();
-        
-        coverFlow.setSpacing(0);
-        coverFlow.setAnimationDuration(1000);
-        
         coverFlow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int position,
