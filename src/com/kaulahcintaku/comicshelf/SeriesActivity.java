@@ -26,34 +26,7 @@ public class SeriesActivity extends Activity {
 	private Item selectedItem;
 	private CoverFlow coverFlow;
 	
-	private ScaleGestureDetector scaleDetector =  new ScaleGestureDetector(this, 
-			
-		new ScaleGestureDetector.OnScaleGestureListener() {
-    	
-			float minZoom = -400;
-			float maxZoom = -200;
-		
-			@Override
-			public void onScaleEnd(ScaleGestureDetector detector) {
-			}
-			
-			@Override
-			public boolean onScaleBegin(ScaleGestureDetector detector) {
-				return true;
-			}
-			
-			@Override
-			public boolean onScale(ScaleGestureDetector detector) {
-				float newZoom = coverFlow.getZoom()*detector.getScaleFactor();
-				if(newZoom > maxZoom)
-					newZoom = maxZoom;
-				if(newZoom < minZoom)
-					newZoom = minZoom;
-				coverFlow.setZoom(newZoom);
-				coverFlow.setSelection(coverFlow.getSelectedItemPosition());
-				return true;
-			}
-	});
+	private ScaleGestureDetector scaleDetector;
 	
     /** Called when the activity is first created. */
     @Override
@@ -116,6 +89,34 @@ public class SeriesActivity extends Activity {
 	        		openSelectedItem();
         	}
 		});
+        
+        scaleDetector =  new ScaleGestureDetector(this, 
+        		new ScaleGestureDetector.OnScaleGestureListener() {
+            	
+        			float minZoom = -400;
+        			float maxZoom = -200;
+        		
+        			@Override
+        			public void onScaleEnd(ScaleGestureDetector detector) {
+        			}
+        			
+        			@Override
+        			public boolean onScaleBegin(ScaleGestureDetector detector) {
+        				return true;
+        			}
+        			
+        			@Override
+        			public boolean onScale(ScaleGestureDetector detector) {
+        				float newZoom = coverFlow.getZoom()*detector.getScaleFactor();
+        				if(newZoom > maxZoom)
+        					newZoom = maxZoom;
+        				if(newZoom < minZoom)
+        					newZoom = minZoom;
+        				coverFlow.setZoom(newZoom);
+        				coverFlow.setSelection(coverFlow.getSelectedItemPosition());
+        				return true;
+        			}
+        	});
     }
     
     private boolean openSelectedItem(){
