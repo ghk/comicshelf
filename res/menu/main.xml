@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/recent"
+          android:title="Recent Comics" />
+    <item android:id="@+id/continue_read"
+          android:title="Continue Read Last Comics" />
+</menu>

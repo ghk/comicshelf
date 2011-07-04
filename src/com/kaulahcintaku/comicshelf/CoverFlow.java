@@ -24,10 +24,14 @@ import android.content.Context;
 import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.animation.Transformation;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class CoverFlow extends Gallery {
 
@@ -52,6 +56,13 @@ public class CoverFlow extends Gallery {
 	 */
 	private int mMaxZoom = -100;
 	
+	private int mSpacing = 0;
+	
+	private static float MAX_ALLOWED_ZOOM = -200.0f;
+	private static float MIN_ALLOWED_ZOOM = -400.0f;
+	
+	private ScaleGestureDetector gestureDetector;
+	
 
 	/**
 	 * The Centre of the Coverflow
@@ -61,16 +72,22 @@ public class CoverFlow extends Gallery {
 	public CoverFlow(Context context) {
 		super(context);
 		this.setStaticTransformationsEnabled(true);
+		setZoom(getZoom());
+		gestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
 	}
 
 	public CoverFlow(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.setStaticTransformationsEnabled(true);
+		setZoom(getZoom());
+		gestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
 	}
 
 	public CoverFlow(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.setStaticTransformationsEnabled(true);
+		setZoom(getZoom());
+		gestureDetector = new ScaleGestureDetector(context, new ScaleGestureListener());
 	}
 
 	/**
@@ -113,11 +130,27 @@ public class CoverFlow extends Gallery {
 	
 	
 	public void setZoom(float zoom){
+		if(zoom > MAX_ALLOWED_ZOOM)
+			zoom = MAX_ALLOWED_ZOOM;
+		if(zoom < MIN_ALLOWED_ZOOM)
+			zoom = MIN_ALLOWED_ZOOM;
 		mZoom = zoom;
+		int newSpacing = (int)(((zoom - MAX_ALLOWED_ZOOM) / MAX_ALLOWED_ZOOM) * 90) + 20;
+		setSpacing(newSpacing);
 	}
 	
 	public float getZoom(){
 		return mZoom;
+	}
+	
+	@Override
+	public void setSpacing(int spacing) {
+		mSpacing = spacing;
+		super.setSpacing(spacing);
+	}
+	
+	public int getSpacing(){
+		return mSpacing;
 	}
 
 	/**
@@ -220,4 +253,32 @@ public class CoverFlow extends Gallery {
 		imageMatrix.postTranslate((imageWidth / 2), (imageHeight / 2));
 		mCamera.restore();
 	}
+	
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+    	gestureDetector.onTouchEvent(event);
+    	return super.onTouchEvent(event);
+	}
+
+	
+	private class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener{
+		@Override
+		public void onScaleEnd(ScaleGestureDetector detector) {
+		}
+        			
+		@Override
+		public boolean onScaleBegin(ScaleGestureDetector detector) {
+			return true;
+		}
+        			
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			float newZoom = getZoom()*detector.getScaleFactor();
+			setZoom(newZoom);
+			setSelection(getSelectedItemPosition());
+			return true;
+		}
+	}
+
 }

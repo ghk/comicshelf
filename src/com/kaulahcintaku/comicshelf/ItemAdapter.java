@@ -116,9 +116,14 @@ public class ItemAdapter extends BaseAdapter {
 
 		// Use this code if you want to load from resources
 		ImageView i = new ImageView(context);
-		i.setImageBitmap(bitmaps.get(position));
-		i.setLayoutParams(new CoverFlow.LayoutParams(130, 130));
+		Bitmap bitmap = bitmaps.get(position);
+		i.setImageBitmap(bitmap);
+		float resizeRatio = getResizeRatio(bitmap.getWidth(), bitmap.getHeight(), 130);
+		i.setLayoutParams(new CoverFlow.LayoutParams(
+				(int)(resizeRatio * bitmap.getWidth()), (int)(resizeRatio * bitmap.getHeight())
+		));
 		i.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		i.setBackgroundColor(android.R.color.background_dark);
 		//i.setBackgroundResource(galleryItemBackground);
 
 		// Make sure we set anti-aliasing otherwise we get jaggies
@@ -127,6 +132,14 @@ public class ItemAdapter extends BaseAdapter {
 		return i;
 
 		// return mImages[position];
+	}
+	
+	private float getResizeRatio(int width, int height, int maxTarget){
+		float wRatio = (float) maxTarget / width;
+		float hRatio = (float) maxTarget / height;
+		return wRatio < hRatio && wRatio < 1
+		? wRatio
+		: hRatio;
 	}
 
 	/**

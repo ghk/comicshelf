@@ -1,7 +1,9 @@
 package com.kaulahcintaku.comicshelf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -72,6 +74,34 @@ public class PerfectViewerDatabase {
 			results.add(comic);
 		}
 		cursor.close();
+		return results;
+	}
+	
+	public List<Item> getLastReads(List<String> lastReadPaths){
+		StringBuilder sql = new StringBuilder();
+		sql.append("select book_cate, book_path, book_cover from bookfolder where book_path in (");
+		if(lastReadPaths.size() > 0){
+			for(String string : lastReadPaths) {
+				sql.append("'");
+				sql.append(string);
+				sql.append("',");
+		    }
+			sql.setLength(sql.length() - 1);
+		}
+		sql.append(")");
+		Cursor cursor = database.rawQuery(sql.toString(), null);
+		Map<String, Item> tempTable = new HashMap<String, Item>();
+		while(cursor.moveToNext()){
+			Item comic = new Item(cursor.getBlob(2), cursor.getString(0), cursor.getString(1), false);
+			comic.setDetail(cursor.getString(1));
+			tempTable.put(comic.getDetail(), comic);
+		}
+		cursor.close();
+		List<Item> results = new ArrayList<Item>();
+		for(String string : lastReadPaths) {
+			if(tempTable.containsKey(string))
+				results.add(tempTable.get(string));
+	    }
 		return results;
 	}
 
