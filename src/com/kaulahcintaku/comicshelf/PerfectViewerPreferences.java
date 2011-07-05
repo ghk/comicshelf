@@ -3,7 +3,6 @@ package com.kaulahcintaku.comicshelf;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class PerfectViewerPreferences {
 	
@@ -109,7 +107,6 @@ public class PerfectViewerPreferences {
 
         public Map<String, ?> getAll() {
             synchronized(this) {
-                //noinspection unchecked
                 return new HashMap(mMap);
             }
         }

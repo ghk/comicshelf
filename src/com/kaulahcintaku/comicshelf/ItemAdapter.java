@@ -1,11 +1,9 @@
 package com.kaulahcintaku.comicshelf;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,12 +15,10 @@ import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 
 public class ItemAdapter extends BaseAdapter {
 	
@@ -51,7 +47,6 @@ public class ItemAdapter extends BaseAdapter {
 		final int reflectionGap = 4;
 
 		List<Bitmap> results = new ArrayList<Bitmap>();
-		int index = 0;
 		for (Bitmap originalImage : originalImages) {
 			int width = originalImage.getWidth();
 			int height = originalImage.getHeight();
@@ -115,7 +110,12 @@ public class ItemAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		// Use this code if you want to load from resources
-		ImageView i = new ImageView(context);
+		ImageView i = null;
+		if (convertView==null || !(convertView instanceof ImageView)) {
+			i = new ImageView(context);
+		} else {
+			i = (ImageView) convertView;
+		}
 		Bitmap bitmap = bitmaps.get(position);
 		i.setImageBitmap(bitmap);
 		float resizeRatio = getResizeRatio(bitmap.getWidth(), bitmap.getHeight(), 130);

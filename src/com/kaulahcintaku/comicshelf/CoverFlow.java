@@ -27,11 +27,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.animation.Transformation;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class CoverFlow extends Gallery {
 
@@ -233,10 +231,9 @@ public class CoverFlow extends Gallery {
 			int rotationAngle) {
 		mCamera.save();
 		final Matrix imageMatrix = t.getMatrix();
-		;
-		final int imageHeight = child.getLayoutParams().height;
-		;
-		final int imageWidth = child.getLayoutParams().width;
+		
+		final int imageHeight = child.getHeight();
+		final int imageWidth = child.getWidth();
 		final int rotation = Math.abs(rotationAngle);
 
 		mCamera.translate(0.0f, -10f, mZoom);
